@@ -155,16 +155,16 @@ function Reflector( geometry, options ) {
 
 		scope.visible = false;
 
-        renderer.setRenderTarget(renderTarget);
+    renderer.setRenderTarget(renderTarget);
 		renderer.setRenderTarget(null);
 
 		xrpackage.render(
 			renderTarget.width,
 			renderTarget.height,
-            virtualCamera.matrixWorld.toArray(new Float32Array(16)),
-            virtualCamera.projectionMatrix.toArray(new Float32Array(16)),
+      virtualCamera.matrixWorld.toArray(new Float32Array(16)),
+      virtualCamera.projectionMatrix.toArray(new Float32Array(16)),
 			renderer.getProperty(renderTarget).__webglFramebuffer
-	    );
+	  );
 
 		/* var currentRenderTarget = renderer.getRenderTarget();
 
