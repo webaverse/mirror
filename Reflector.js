@@ -161,10 +161,10 @@ function Reflector( geometry, options ) {
 		xrpackage.render(
 			renderTarget.width,
 			renderTarget.height,
-      virtualCamera.matrixWorld.toArray(new Float32Array(16)),
-      virtualCamera.projectionMatrix.toArray(new Float32Array(16)),
+			virtualCamera.matrixWorld.toArray(new Float32Array(16)),
+			virtualCamera.projectionMatrix.toArray(new Float32Array(16)),
 			renderer.getProperty(renderTarget).__webglFramebuffer
-	  );
+		);
 
 		/* var currentRenderTarget = renderer.getRenderTarget();
 
