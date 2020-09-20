@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {Reflector} from './Reflector.js';
 import app from 'app';
-console.log('loaded app', app);
+// console.log('loaded app', app);
 const {scene, renderer, camera} = app;
 
 const localVector = new THREE.Vector3();

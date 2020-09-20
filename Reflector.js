@@ -153,7 +153,8 @@ function Reflector( geometry, options ) {
 
 		scope.visible = false;
 
-        renderer.setRenderTarget(renderTarget);
+    renderer.setRenderTarget(renderTarget);
+    renderer.clear(true, true, true);
 		renderer.render(scene, virtualCamera);
 		renderer.setRenderTarget(null);
 
