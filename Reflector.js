@@ -2,7 +2,7 @@
  * @author Slayvin / http://slayvin.net
  */
 
-import * as THREE from './three.module.js';
+import * as THREE from 'three';
 
 function Reflector( geometry, options ) {
 
@@ -67,8 +67,6 @@ function Reflector( geometry, options ) {
 	this.material = material;
 
 	this.onBeforeRender = function ( renderer, scene, camera ) {
-		this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
-
 		if ( 'recursion' in camera.userData ) {
 
 			if ( camera.userData.recursion === recursion ) return;
@@ -155,16 +153,9 @@ function Reflector( geometry, options ) {
 
 		scope.visible = false;
 
-    renderer.setRenderTarget(renderTarget);
+        renderer.setRenderTarget(renderTarget);
+		renderer.render(scene, virtualCamera);
 		renderer.setRenderTarget(null);
-
-		xrpackage.render(
-			renderTarget.width,
-			renderTarget.height,
-			virtualCamera.matrixWorld.toArray(new Float32Array(16)),
-			virtualCamera.projectionMatrix.toArray(new Float32Array(16)),
-			renderer.getProperty(renderTarget).__webglFramebuffer
-		);
 
 		/* var currentRenderTarget = renderer.getRenderTarget();
 
