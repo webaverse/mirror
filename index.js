@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import {Reflector} from './Reflector.js';
-import app from 'app';
+import {scene, renderer, camera} from 'app';
 // console.log('loaded app', app);
-const {scene, renderer, camera} = app;
 
 const localVector = new THREE.Vector3();
 const localMatrix = new THREE.Matrix4();
