@@ -12,7 +12,7 @@ const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerH
 camera.position.set(0, 0.5, 2);
 camera.rotation.order = 'YXZ'; */
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF);
+/* const ambientLight = new THREE.AmbientLight(0xFFFFFF);
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 3);
@@ -26,7 +26,7 @@ scene.add(directionalLight);
 
 const directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 3);
 directionalLight2.position.set(-0.5, 0.1, 0.5).multiplyScalar(100);
-scene.add(directionalLight2);
+scene.add(directionalLight2); */
 
 const mirrorMesh = (() => {
   const mirrorWidth = 3;
