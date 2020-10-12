@@ -66,7 +66,7 @@ const mirrorMesh = (() => {
 
   return mesh;
 })();
-scene.add(mirrorMesh);
+app.object.add(mirrorMesh);
 
 /* function animate() {
   renderer.render(scene, camera);
