@@ -153,28 +153,27 @@ function Reflector( geometry, options ) {
 
 		scope.visible = false;
 
-    renderer.setRenderTarget(renderTarget);
+    /* renderer.setRenderTarget(renderTarget);
     renderer.clear(true, true, true);
 		renderer.render(scene, virtualCamera);
-		renderer.setRenderTarget(null);
+		renderer.setRenderTarget(null); */
 
-		/* var currentRenderTarget = renderer.getRenderTarget();
+    var currentRenderTarget = renderer.getRenderTarget();
 
-		var currentVrEnabled = renderer.xr.enabled;
-		var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+    var currentXrEnabled = renderer.xr.enabled;
+    var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
-		renderer.xr.enabled = false; // Avoid camera modification and recursion
-		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+    renderer.xr.enabled = false; // Avoid camera modification and recursion
+    renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
-		renderer.setRenderTarget( renderTarget );
-		renderer.clear();
-		renderer.render( scene, virtualCamera );
-		// console.log('render target', renderTarget, renderer.getProperty(renderTarget).__webglFramebuffer);
+    renderer.setRenderTarget( renderTarget );
+    renderer.clear();
+    renderer.render( scene, virtualCamera );
 
-		renderer.xr.enabled = currentVrEnabled;
-		renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
+    renderer.xr.enabled = currentXrEnabled;
+    renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 
-		renderer.setRenderTarget( currentRenderTarget ); */
+    renderer.setRenderTarget( currentRenderTarget );
 
 		// Restore viewport
 
