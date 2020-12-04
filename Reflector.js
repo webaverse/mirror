@@ -192,7 +192,7 @@ function Reflector( geometry, options ) {
         // this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
 	};
 	/* this.onAfterRender = (renderer, scene, camera) => {
-    this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
+        this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
 	}; */
 
 	this.getRenderTarget = function () {
