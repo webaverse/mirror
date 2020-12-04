@@ -75,7 +75,7 @@ function Reflector( geometry, options ) {
 
 		}
     
-    this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
+        // this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
 
 		reflectorWorldPosition.setFromMatrixPosition( scope.matrixWorld );
 		cameraWorldPosition.setFromMatrixPosition( camera.matrixWorld );
@@ -189,7 +189,7 @@ function Reflector( geometry, options ) {
 
 		scope.visible = true;
 
-    this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
+        // this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
 	};
 	/* this.onAfterRender = (renderer, scene, camera) => {
     this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
