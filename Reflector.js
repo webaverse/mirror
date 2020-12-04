@@ -89,105 +89,105 @@ function Reflector( geometry, options ) {
 
 		// Avoid rendering when reflector is facing away
 
-		if ( view.dot( normal ) > 0 ) return;
+		if ( view.dot( normal ) < 0 ) {
+			view.reflect( normal ).negate();
+			view.add( reflectorWorldPosition );
 
-		view.reflect( normal ).negate();
-		view.add( reflectorWorldPosition );
+			rotationMatrix.extractRotation( camera.matrixWorld );
 
-		rotationMatrix.extractRotation( camera.matrixWorld );
+			lookAtPosition.set( 0, 0, - 1 );
+			lookAtPosition.applyMatrix4( rotationMatrix );
+			lookAtPosition.add( cameraWorldPosition );
 
-		lookAtPosition.set( 0, 0, - 1 );
-		lookAtPosition.applyMatrix4( rotationMatrix );
-		lookAtPosition.add( cameraWorldPosition );
+			target.subVectors( reflectorWorldPosition, lookAtPosition );
+			target.reflect( normal ).negate();
+			target.add( reflectorWorldPosition );
 
-		target.subVectors( reflectorWorldPosition, lookAtPosition );
-		target.reflect( normal ).negate();
-		target.add( reflectorWorldPosition );
+			virtualCamera.position.copy( view );
+			virtualCamera.up.set( 0, 1, 0 );
+			virtualCamera.up.applyMatrix4( rotationMatrix );
+			virtualCamera.up.reflect( normal );
+			virtualCamera.lookAt( target );
 
-		virtualCamera.position.copy( view );
-		virtualCamera.up.set( 0, 1, 0 );
-		virtualCamera.up.applyMatrix4( rotationMatrix );
-		virtualCamera.up.reflect( normal );
-		virtualCamera.lookAt( target );
+			virtualCamera.far = camera.far; // Used in WebGLBackground
 
-		virtualCamera.far = camera.far; // Used in WebGLBackground
+			virtualCamera.updateMatrixWorld();
+			virtualCamera.projectionMatrix.copy( camera.projectionMatrix );
 
-		virtualCamera.updateMatrixWorld();
-		virtualCamera.projectionMatrix.copy( camera.projectionMatrix );
+			virtualCamera.userData.recursion = 0;
 
-		virtualCamera.userData.recursion = 0;
+			// Update the texture matrix
+			textureMatrix.set(
+				0.5, 0.0, 0.0, 0.5,
+				0.0, 0.5, 0.0, 0.5,
+				0.0, 0.0, 0.5, 0.5,
+				0.0, 0.0, 0.0, 1.0
+			);
+			textureMatrix.multiply( virtualCamera.projectionMatrix );
+			textureMatrix.multiply( virtualCamera.matrixWorldInverse );
+			textureMatrix.multiply( scope.matrixWorld );
 
-		// Update the texture matrix
-		textureMatrix.set(
-			0.5, 0.0, 0.0, 0.5,
-			0.0, 0.5, 0.0, 0.5,
-			0.0, 0.0, 0.5, 0.5,
-			0.0, 0.0, 0.0, 1.0
-		);
-		textureMatrix.multiply( virtualCamera.projectionMatrix );
-		textureMatrix.multiply( virtualCamera.matrixWorldInverse );
-		textureMatrix.multiply( scope.matrixWorld );
+			// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
+			// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
+			reflectorPlane.setFromNormalAndCoplanarPoint( normal, reflectorWorldPosition );
+			reflectorPlane.applyMatrix4( virtualCamera.matrixWorldInverse );
 
-		// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
-		// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
-		reflectorPlane.setFromNormalAndCoplanarPoint( normal, reflectorWorldPosition );
-		reflectorPlane.applyMatrix4( virtualCamera.matrixWorldInverse );
+			clipPlane.set( reflectorPlane.normal.x, reflectorPlane.normal.y, reflectorPlane.normal.z, reflectorPlane.constant );
 
-		clipPlane.set( reflectorPlane.normal.x, reflectorPlane.normal.y, reflectorPlane.normal.z, reflectorPlane.constant );
+			var projectionMatrix = virtualCamera.projectionMatrix;
 
-		var projectionMatrix = virtualCamera.projectionMatrix;
+			q.x = ( Math.sign( clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
+			q.y = ( Math.sign( clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
+			q.z = - 1.0;
+			q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
 
-		q.x = ( Math.sign( clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-		q.y = ( Math.sign( clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
-		q.z = - 1.0;
-		q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
+			// Calculate the scaled plane vector
+			clipPlane.multiplyScalar( 2.0 / clipPlane.dot( q ) );
 
-		// Calculate the scaled plane vector
-		clipPlane.multiplyScalar( 2.0 / clipPlane.dot( q ) );
+			// Replacing the third row of the projection matrix
+			projectionMatrix.elements[ 2 ] = clipPlane.x;
+			projectionMatrix.elements[ 6 ] = clipPlane.y;
+			projectionMatrix.elements[ 10 ] = clipPlane.z + 1.0 - clipBias;
+			projectionMatrix.elements[ 14 ] = clipPlane.w;
 
-		// Replacing the third row of the projection matrix
-		projectionMatrix.elements[ 2 ] = clipPlane.x;
-		projectionMatrix.elements[ 6 ] = clipPlane.y;
-		projectionMatrix.elements[ 10 ] = clipPlane.z + 1.0 - clipBias;
-		projectionMatrix.elements[ 14 ] = clipPlane.w;
+			// Render
 
-		// Render
+			scope.visible = false;
 
-		scope.visible = false;
+		    /* renderer.setRenderTarget(renderTarget);
+		    renderer.clear(true, true, true);
+				renderer.render(scene, virtualCamera);
+				renderer.setRenderTarget(null); */
 
-    /* renderer.setRenderTarget(renderTarget);
-    renderer.clear(true, true, true);
-		renderer.render(scene, virtualCamera);
-		renderer.setRenderTarget(null); */
+		    var currentRenderTarget = renderer.getRenderTarget();
 
-    var currentRenderTarget = renderer.getRenderTarget();
+		    var currentXrEnabled = renderer.xr.enabled;
+		    var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
-    var currentXrEnabled = renderer.xr.enabled;
-    var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+		    renderer.xr.enabled = false; // Avoid camera modification and recursion
+		    renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
-    renderer.xr.enabled = false; // Avoid camera modification and recursion
-    renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+		    renderer.setRenderTarget( renderTarget );
+		    renderer.clear();
+		    renderer.render( scene, virtualCamera );
 
-    renderer.setRenderTarget( renderTarget );
-    renderer.clear();
-    renderer.render( scene, virtualCamera );
+		    renderer.xr.enabled = currentXrEnabled;
+		    renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 
-    renderer.xr.enabled = currentXrEnabled;
-    renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
+		    renderer.setRenderTarget( currentRenderTarget );
 
-    renderer.setRenderTarget( currentRenderTarget );
+			// Restore viewport
 
-		// Restore viewport
+			var viewport = camera.viewport;
 
-		var viewport = camera.viewport;
+			if ( viewport !== undefined ) {
 
-		if ( viewport !== undefined ) {
+				renderer.state.viewport( viewport );
 
-			renderer.state.viewport( viewport );
+			}
 
-		}
-
-		scope.visible = true;
+			scope.visible = true;
+	    }
 
         this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
 	};
