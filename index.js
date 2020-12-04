@@ -53,12 +53,12 @@ const mirrorMesh = (() => {
   );
   mesh.add(borderMesh);
 
-  /* mesh.onBeforeRender2 = () => {
+  mesh.onBeforeRender2 = () => {
     app.onBeforeRender();
   };
   mesh.onAfterRender2 = () => {
     app.onAfterRender();
-  }; */
+  };
 
   return mesh;
 })();
