@@ -53,16 +53,12 @@ const mirrorMesh = (() => {
   );
   mesh.add(borderMesh);
 
-  /* mesh.onBeforeRender2 = () => {
-    if (rig) {
-      rig.undecapitate();
-    }
+  mesh.onBeforeRender2 = () => {
+    app.onBeforeRender();
   };
   mesh.onAfterRender2 = () => {
-    if (rig && session) {
-      rig.decapitate();
-    }
-  }; */
+    app.onAfterRender();
+  };
 
   return mesh;
 })();
