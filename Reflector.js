@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import {avatarScene} from 'app';
 
 function Reflector( geometry, options ) {
 
@@ -171,6 +172,7 @@ function Reflector( geometry, options ) {
     renderer.setRenderTarget( renderTarget );
     renderer.clear();
     renderer.render( scene, virtualCamera );
+    renderer.render( avatarScene, virtualCamera );
 
     renderer.xr.enabled = currentXrEnabled;
     renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
