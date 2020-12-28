@@ -35,7 +35,7 @@ const mirrorMesh = (() => {
     .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
   const mesh = new Reflector(geometry, {
     clipBias: 0.003,
-    textureWidth: 1024 * window.devicePixelRatio,
+    textureWidth: 2048 * window.devicePixelRatio,
     textureHeight: 2048 * window.devicePixelRatio,
     color: 0x889999,
     addColor: 0x300000,
