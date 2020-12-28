@@ -66,6 +66,7 @@ function Reflector( geometry, options ) {
 
 	this.material = material;
 
+    let lastRendered = false;
 	this.onBeforeRender = function ( renderer, scene, camera ) {
 		if ( 'recursion' in camera.userData ) {
 
@@ -89,7 +90,8 @@ function Reflector( geometry, options ) {
 
 		// Avoid rendering when reflector is facing away
 
-		if ( view.dot( normal ) < 0 ) {
+        const maxDistance = 5;
+		if ( view.dot( normal ) < 0 && view.length() < maxDistance) {
 			view.reflect( normal ).negate();
 			view.add( reflectorWorldPosition );
 
@@ -187,6 +189,16 @@ function Reflector( geometry, options ) {
 			}
 
 			scope.visible = true;
+
+			lastRendered = true;
+	    } else {
+	    	if (lastRendered) {
+	    		var currentRenderTarget = renderer.getRenderTarget();
+	    		renderer.setRenderTarget( renderTarget );
+		        renderer.clear();
+		        renderer.setRenderTarget( currentRenderTarget );
+	    	}
+	    	lastRendered = false;
 	    }
 
         this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
