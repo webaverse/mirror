@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {Reflector} from './Reflector.js';
-import {scene, renderer, camera, app} from 'app';
+import {scene, renderer, camera, physics, app} from 'app';
 // console.log('loaded app', app);
 
 const localVector = new THREE.Vector3();
@@ -28,9 +28,10 @@ const directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 3);
 directionalLight2.position.set(-0.5, 0.1, 0.5).multiplyScalar(100);
 scene.add(directionalLight2); */
 
+const mirrorWidth = 3;
+const mirrorHeight = 2;
+const mirrorDepth = 0.1;
 const mirrorMesh = (() => {
-  const mirrorWidth = 3;
-  const mirrorHeight = 2;
   const geometry = new THREE.PlaneBufferGeometry(mirrorWidth, mirrorHeight)
     .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
   const mesh = new Reflector(geometry, {
@@ -45,8 +46,8 @@ const mirrorMesh = (() => {
   mesh.position.set(0, 0, 0);
 
   const borderMesh = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(mirrorWidth + 0.1, mirrorHeight + 0.1, 0.1)
-      .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, -0.1/2 - 0.01)),
+    new THREE.BoxBufferGeometry(mirrorWidth + mirrorDepth, mirrorHeight + mirrorDepth, mirrorDepth)
+      .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, -mirrorDepth/2 - 0.01)),
     new THREE.MeshPhongMaterial({
       color: 0x5c6bc0,
     })
@@ -63,6 +64,8 @@ const mirrorMesh = (() => {
   return mesh;
 })();
 app.object.add(mirrorMesh);
+
+const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
 
 /* function animate() {
   renderer.render(scene, camera);
