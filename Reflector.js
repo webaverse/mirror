@@ -170,6 +170,7 @@ function Reflector( geometry, options ) {
 		    renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
 		    renderer.setRenderTarget( renderTarget );
+		    renderer.state.buffers.depth.setMask(true);
 		    renderer.clear();
 		    renderer.render( scene, virtualCamera );
 
