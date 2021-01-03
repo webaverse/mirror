@@ -33,7 +33,7 @@ const mirrorHeight = 2;
 const mirrorDepth = 0.1;
 const mirrorMesh = (() => {
   const geometry = new THREE.PlaneBufferGeometry(mirrorWidth, mirrorHeight)
-    .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
+    // .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
   const mesh = new Reflector(geometry, {
     clipBias: 0.003,
     textureWidth: 2048 * window.devicePixelRatio,
@@ -47,7 +47,7 @@ const mirrorMesh = (() => {
 
   const borderMesh = new THREE.Mesh(
     new THREE.BoxBufferGeometry(mirrorWidth + mirrorDepth, mirrorHeight + mirrorDepth, mirrorDepth)
-      .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, -mirrorDepth/2 - 0.01)),
+      .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -mirrorDepth/2 - 0.01)),
     new THREE.MeshPhongMaterial({
       color: 0x5c6bc0,
     })
@@ -63,6 +63,7 @@ const mirrorMesh = (() => {
 
   return mesh;
 })();
+mirrorMesh.position.y = 1;
 app.object.add(mirrorMesh);
 
 const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
