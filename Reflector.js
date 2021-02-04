@@ -42,7 +42,8 @@ function Reflector( geometry, options ) {
 		minFilter: THREE.LinearFilter,
 		magFilter: THREE.LinearFilter,
 		format: THREE.RGBFormat,
-		stencilBuffer: false
+		stencilBuffer: false,
+		encoding: THREE.sRGBEncoding,
 	};
 
 	var renderTarget = new THREE.WebGLRenderTarget( textureWidth, textureHeight, parameters );
