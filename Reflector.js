@@ -215,10 +215,6 @@ constructor( geometry, options ) {
 
 }
 };
-
-// Reflector.prototype = Object.create( THREE.Mesh.prototype );
-// Reflector.prototype.constructor = THREE.Reflector;
-
 Reflector.ReflectorShader = {
 
 	uniforms: {
