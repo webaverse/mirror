@@ -4,9 +4,10 @@
 
 import * as THREE from 'three';
 
-function Reflector( geometry, options ) {
+class Reflector extends THREE.Mesh {
+constructor( geometry, options ) {
 
-	THREE.Mesh.call( this, geometry );
+  super(geometry);
 
 	this.type = 'Reflector';
 
@@ -212,10 +213,11 @@ function Reflector( geometry, options ) {
 
 	};
 
+}
 };
 
-Reflector.prototype = Object.create( THREE.Mesh.prototype );
-Reflector.prototype.constructor = THREE.Reflector;
+// Reflector.prototype = Object.create( THREE.Mesh.prototype );
+// Reflector.prototype.constructor = THREE.Reflector;
 
 Reflector.ReflectorShader = {
 
