@@ -4,6 +4,10 @@
 
 import * as THREE from 'three';
 
+const localColor = new THREE.Color();
+const blackColor = new THREE.Color(0x000000);
+const whiteColor = new THREE.Color(0xFFFFFF);
+
 class Reflector extends THREE.Mesh {
 constructor( geometry, options ) {
 
@@ -68,7 +72,7 @@ constructor( geometry, options ) {
 
 	this.material = material;
 
-    let lastRendered = false;
+  let lastRendered = false;
 	this.onBeforeRender = function ( renderer, scene, camera ) {
 		if ( 'recursion' in camera.userData ) {
 
@@ -78,7 +82,7 @@ constructor( geometry, options ) {
 
 		}
     
-        this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
+    this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
 
 		reflectorWorldPosition.setFromMatrixPosition( scope.matrixWorld );
 		cameraWorldPosition.setFromMatrixPosition( camera.matrixWorld );
@@ -90,9 +94,11 @@ constructor( geometry, options ) {
 
 		view.subVectors( reflectorWorldPosition, cameraWorldPosition );
 
-		// Avoid rendering when reflector is facing away
+    const oldClearColor = renderer.getClearColor(localColor);
+    const oldClearAlpha = renderer.getClearAlpha();
 
-        const maxDistance = 5;
+		// Avoid rendering when reflector is facing away
+    const maxDistance = 5;
 		if ( view.dot( normal ) < 0 && view.length() < maxDistance) {
 			view.reflect( normal ).negate();
 			view.add( reflectorWorldPosition );
@@ -173,7 +179,8 @@ constructor( geometry, options ) {
 
 		    renderer.setRenderTarget( renderTarget );
 		    renderer.state.buffers.depth.setMask(true);
-		    renderer.clear();
+        renderer.setClearColor(whiteColor, 1);
+        renderer.clear();
 		    renderer.render( scene, virtualCamera );
 
 		    renderer.xr.enabled = currentXrEnabled;
@@ -194,17 +201,20 @@ constructor( geometry, options ) {
 			scope.visible = true;
 
 			lastRendered = true;
-	    } else {
-	    	if (lastRendered) {
-	    		var currentRenderTarget = renderer.getRenderTarget();
-	    		renderer.setRenderTarget( renderTarget );
-		        renderer.clear();
-		        renderer.setRenderTarget( currentRenderTarget );
-	    	}
-	    	lastRendered = false;
-	    }
+    } else {
+      if (lastRendered) {
+        const currentRenderTarget = renderer.getRenderTarget();
+        renderer.setRenderTarget(renderTarget);
+        renderer.setClearColor(blackColor, 1);
+        renderer.clear();
+        renderer.setRenderTarget(currentRenderTarget);
+      }
+      lastRendered = false;
+    }
 
-        this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
+    renderer.setClearColor(oldClearColor, oldClearAlpha);
+
+    this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
 	};
 
 	this.getRenderTarget = function () {
