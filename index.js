@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {Reflector} from './Reflector.js';
-import {scene, renderer, camera, app, physics, ui, popovers} from 'app';
+import {scene, renderer, camera, app, physics, ui/*, popovers*/} from 'app';
 // console.log('loaded app', app);
 
 const localVector = new THREE.Vector3();
@@ -68,7 +68,7 @@ app.object.add(mirrorMesh);
 
 const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
 
-const popoverWidth = 600;
+/* const popoverWidth = 600;
 const popoverHeight = 200;
 const popoverTextMesh = (() => {
   const textMesh = ui.makeTextMesh('This is your mirror.\nTake a look at yourself!', undefined, 0.5, 'center', 'middle');
@@ -83,7 +83,7 @@ const popoverMesh = popovers.addPopover(popoverTextMesh, {
   width: popoverWidth,
   height: popoverHeight,
   target: popoverTarget,
-});
+}); */
 
 /* function animate() {
   renderer.render(scene, camera);
