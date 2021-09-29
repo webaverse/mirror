@@ -3,7 +3,7 @@ import {Reflector} from './Reflector.js';
 // import {scene, renderer, camera, app, physics, ui} from 'app';
 // console.log('loaded app', app);
 import metaversefile from 'metaversefile';
-const {usePhysics, useBeforeRender, useAfterRender} = metaversefile;
+const {usePhysics, useCleanup, useBeforeRender, useAfterRender} = metaversefile;
 
 const localVector = new THREE.Vector3();
 const localMatrix = new THREE.Matrix4();
@@ -65,7 +65,12 @@ export default () => {
   mirrorMesh.position.y = 1;
   // app.object.add(mirrorMesh);
 
-  const physicsId = usePhysics().addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
+  const physics = usePhysics();
+  const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
+
+  useCleanup(() => {
+    physics.removeGeometry(physicsId);
+  });
 
   return mirrorMesh;
 
