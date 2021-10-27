@@ -45,7 +45,7 @@ constructor( geometry, options ) {
 
 	var parameters = {
 		minFilter: THREE.LinearFilter,
-		magFilter: THREE.LinearFilter,
+		magFilter: THREE.LinearMipMapLinearFilter,
 		format: THREE.RGBFormat,
 		stencilBuffer: false,
 		encoding: THREE.sRGBEncoding,
