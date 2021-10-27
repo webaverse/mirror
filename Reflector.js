@@ -44,8 +44,8 @@ constructor( geometry, options ) {
 	var virtualCamera = new THREE.PerspectiveCamera();
 
 	var parameters = {
-		minFilter: THREE.LinearFilter,
-		magFilter: THREE.LinearMipMapLinearFilter,
+		minFilter: THREE.LinearMipMapLinearFilter,
+		magFilter: THREE.LinearFilter,
 		format: THREE.RGBFormat,
 		stencilBuffer: false,
 		encoding: THREE.sRGBEncoding,

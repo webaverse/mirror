@@ -44,7 +44,7 @@ export default () => {
       color: 0x889999,
       addColor: 0x300000,
       recursion: 1,
-      // transparent: true,
+      transparent: true,
     });
     mesh.position.set(0, 0, 0);
 
