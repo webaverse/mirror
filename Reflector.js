@@ -48,7 +48,7 @@ constructor( geometry, options ) {
 		magFilter: THREE.LinearFilter,
 		format: THREE.RGBAFormat,
 		stencilBuffer: false,
-		encoding: THREE.sRGBEncoding,
+		// encoding: THREE.sRGBEncoding,
 	};
 
 	var renderTarget = new THREE.WebGLRenderTarget( textureWidth, textureHeight, parameters );
