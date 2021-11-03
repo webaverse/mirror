@@ -1,0 +1,5 @@
+{
+  "name": "street",
+  "description": "Mirror",
+  "start_url": "index.js"
+}
