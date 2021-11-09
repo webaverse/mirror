@@ -244,6 +244,8 @@ Reflector.ReflectorShader = {
 	},
 
 	vertexShader: [
+		`${THREE.ShaderChunk.common}`,
+		`${THREE.ShaderChunk.logdepthbuf_pars_vertex}`,
 		'uniform mat4 textureMatrix;',
 		'varying vec4 vUv;',
 
@@ -253,6 +255,8 @@ Reflector.ReflectorShader = {
 
 		'	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
 
+		`${THREE.ShaderChunk.logdepthbuf_vertex}`,
+
 		'}'
 	].join( '\n' ),
 
@@ -260,6 +264,8 @@ Reflector.ReflectorShader = {
 		'uniform vec3 color;',
 		'uniform sampler2D tDiffuse;',
 		'varying vec4 vUv;',
+
+		`${THREE.ShaderChunk.logdepthbuf_pars_fragment}`,
 
 		'float blendOverlay( float base, float blend ) {',
 
@@ -277,6 +283,8 @@ Reflector.ReflectorShader = {
 
 		'	vec4 base = texture2DProj( tDiffuse, vUv );',
 		'	gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );',
+
+		`${THREE.ShaderChunk.logdepthbuf_fragment}`,
 
 		'}'
 	].join( '\n' )
