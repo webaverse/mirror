@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {Reflector} from './Reflector.js';
 // import {scene, renderer, camera, app, physics, ui} from 'app';
 // console.log('loaded app', app);
-import metaversefile from 'metaversefile';
-const {usePhysics, useCleanup, useBeforeRender, useAfterRender} = metaversefile;
+import totum from 'totum';
+const {usePhysics, useCleanup, useBeforeRender, useAfterRender} = totum;
 
 const localVector = new THREE.Vector3();
 const localMatrix = new THREE.Matrix4();
