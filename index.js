@@ -64,7 +64,7 @@ export default () => {
   })();
   mirrorMesh.position.y = 1;
   // app.object.add(mirrorMesh);
-
+  mirrorMesh.updateMatrixWorld();
   const physics = usePhysics();
   const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
 
