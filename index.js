@@ -3,12 +3,15 @@ import {Reflector} from './Reflector.js';
 // import {scene, renderer, camera, app, physics, ui} from 'app';
 // console.log('loaded app', app);
 import metaversefile from 'metaversefile';
-const {usePhysics, useCleanup, useBeforeRender, useAfterRender} = metaversefile;
+const {useApp, usePhysics, useCleanup, useBeforeRender, useAfterRender} = metaversefile;
 
 const localVector = new THREE.Vector3();
+const localVector2 = new THREE.Vector3();
+const localQuaternion = new THREE.Quaternion();
 const localMatrix = new THREE.Matrix4();
 
 export default () => {
+  const app = useApp();
   /* const scene = new THREE.Scene();
   // scene.background = new THREE.Color(0xEEEEEE);
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -63,16 +66,24 @@ export default () => {
     return mesh;
   })();
   mirrorMesh.position.y = 1;
-  // app.object.add(mirrorMesh);
-  mirrorMesh.updateMatrixWorld();
+  app.add(mirrorMesh);
+  app.updateMatrixWorld();
+
   const physics = usePhysics();
-  const physicsId = physics.addBoxGeometry(mirrorMesh.position, mirrorMesh.quaternion, new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth).multiplyScalar(0.5), false);
+  mirrorMesh.matrixWorld.decompose(localVector, localQuaternion, localVector2);
+  const physicsId = physics.addBoxGeometry(
+    localVector,
+    localQuaternion,
+    new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth)
+      .multiplyScalar(0.5),
+    false
+  );
 
   useCleanup(() => {
     physics.removeGeometry(physicsId);
   });
 
-  return mirrorMesh;
+  return app;
 
   /* const popoverWidth = 600;
   const popoverHeight = 200;
