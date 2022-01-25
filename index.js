@@ -8,7 +8,7 @@ const {useApp, usePhysics, useCleanup, useBeforeRender, useAfterRender} = metave
 const localVector = new THREE.Vector3();
 const localVector2 = new THREE.Vector3();
 const localQuaternion = new THREE.Quaternion();
-const localMatrix = new THREE.Matrix4();
+// const localMatrix = new THREE.Matrix4();
 
 export default () => {
   const app = useApp();
