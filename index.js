@@ -3,7 +3,7 @@ import {Reflector} from './Reflector.js';
 // import {scene, renderer, camera, app, physics, ui} from 'app';
 // console.log('loaded app', app);
 import metaversefile from 'metaversefile';
-const {useApp, usePhysics, useCleanup, useBeforeRender, useAfterRender} = metaversefile;
+const {useApp, usePhysics, useCleanup, useBeforeRender, useAfterRender, registerMirror, unregisterMirror} = metaversefile;
 
 const localVector = new THREE.Vector3();
 const localVector2 = new THREE.Vector3();
@@ -33,6 +33,8 @@ export default () => {
   const directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 3);
   directionalLight2.position.set(-0.5, 0.1, 0.5).multiplyScalar(100);
   scene.add(directionalLight2); */
+
+  registerMirror(app);
 
   const mirrorWidth = 3;
   const mirrorHeight = 2;
@@ -80,6 +82,7 @@ export default () => {
   );
 
   useCleanup(() => {
+    unregisterMirror(app);
     physics.removeGeometry(physicsId);
   });
 
