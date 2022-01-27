@@ -47,6 +47,7 @@ constructor( geometry, options ) {
 		minFilter: THREE.LinearFilter,
 		magFilter: THREE.LinearFilter,
 		format: THREE.RGBAFormat,
+		encoding: THREE.sRGBEncoding,
 		stencilBuffer: false,
 		// encoding: THREE.sRGBEncoding,
 	};
