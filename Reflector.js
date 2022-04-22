@@ -180,8 +180,9 @@ constructor( geometry, options ) {
 
 		    renderer.setRenderTarget( renderTarget );
 		    renderer.state.buffers.depth.setMask(true);
-        renderer.setClearColor(whiteColor, 1);
-        renderer.clear();
+            renderer.setClearColor(whiteColor, 1);
+            renderer.clear();
+            renderer.info.render.frame ++;
 		    renderer.render( scene, virtualCamera );
 
 		    renderer.xr.enabled = currentXrEnabled;
