@@ -182,9 +182,9 @@ constructor( geometry, options ) {
             renderer.state.buffers.depth.setMask(true);
             renderer.setClearColor(whiteColor, 1);
             renderer.clear();
-            // need to update frame to request skeleton update for the renderer skeleton update
-            // in case of first person view when head gets removed.
-            renderer.info.render.frame ++;
+            // // need to update frame to request skeleton update for the renderer skeleton update
+            // // in case of first person view when head gets removed.
+            // renderer.info.render.frame ++;
             renderer.render( scene, virtualCamera );
 
             renderer.xr.enabled = currentXrEnabled;
