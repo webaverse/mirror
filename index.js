@@ -11,8 +11,6 @@ const localQuaternion = new THREE.Quaternion();
 // const localMatrix = new THREE.Matrix4();
 
 export default () => {
-  console.log('mirror!!!!');
-
   const app = useApp();
   /* const scene = new THREE.Scene();
   // scene.background = new THREE.Color(0xEEEEEE);
@@ -42,8 +40,8 @@ export default () => {
   const mirrorHeight = 2;
   const mirrorDepth = 0.1;
   const mirrorMesh = (() => {
-    const geometry = new THREE.PlaneBufferGeometry(mirrorWidth, mirrorHeight);
-    // .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
+    const geometry = new THREE.PlaneBufferGeometry(mirrorWidth, mirrorHeight)
+      // .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 1, 0));
     const mesh = new Reflector(geometry, {
       clipBias: 0.003,
       textureWidth: 2048 * window.devicePixelRatio,
@@ -57,10 +55,10 @@ export default () => {
 
     const borderMesh = new THREE.Mesh(
       new THREE.BoxBufferGeometry(mirrorWidth + mirrorDepth, mirrorHeight + mirrorDepth, mirrorDepth)
-        .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -mirrorDepth / 2 - 0.01)),
+        .applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -mirrorDepth/2 - 0.01)),
       new THREE.MeshPhongMaterial({
         color: 0x5c6bc0,
-      }),
+      })
     );
     mesh.add(borderMesh);
 
@@ -80,7 +78,7 @@ export default () => {
     localQuaternion,
     new THREE.Vector3(mirrorWidth, mirrorHeight, mirrorDepth)
       .multiplyScalar(0.5),
-    false,
+    false
   );
 
   useCleanup(() => {
