@@ -47,33 +47,39 @@ constructor( geometry, options ) {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
         format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
         stencilBuffer: false,
-        // encoding: THREE.sRGBEncoding,
     };
 
-    var renderTarget = new THREE.WebGLRenderTarget( textureWidth, textureHeight, parameters );
+    const createRenderTarget = (encoding) => {
 
-    if ( ! THREE.Math.isPowerOfTwo( textureWidth ) || ! THREE.Math.isPowerOfTwo( textureHeight ) ) {
+        parameters[encoding] = encoding;
+        var renderTarget = new THREE.WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-        renderTarget.texture.generateMipmaps = false;
+        if ( ! THREE.MathUtils.isPowerOfTwo( textureWidth ) || ! THREE.MathUtils.isPowerOfTwo( textureHeight ) ) {
 
-    }
+            renderTarget.texture.generateMipmaps = false;
 
-    var material = new THREE.ShaderMaterial( {
-        uniforms: THREE.UniformsUtils.clone( shader.uniforms ),
-        fragmentShader: shader.fragmentShader,
-        vertexShader: shader.vertexShader,
-        transparent: options.transparent,
-    } );
+        }
 
-    material.uniforms[ "tDiffuse" ].value = renderTarget.texture;
-    material.uniforms[ "color" ].value = color;
-    material.uniforms[ "textureMatrix" ].value = textureMatrix;
+        var material = new THREE.ShaderMaterial( {
+            uniforms: THREE.UniformsUtils.clone( shader.uniforms ),
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            transparent: options.transparent,
+        } );
 
-    this.material = material;
+        material.uniforms[ "tDiffuse" ].value = renderTarget.texture;
+        material.uniforms[ "color" ].value = color;
+        material.uniforms[ "textureMatrix" ].value = textureMatrix;
 
-  let lastRendered = false;
+        this.material = material;
+
+        return renderTarget;
+    };
+
+    let lastRendered = false;
+    let renderTarget = null;
+    
     this.onBeforeRender = function ( renderer, scene, camera ) {
         if ( 'recursion' in camera.userData ) {
 
@@ -83,7 +89,7 @@ constructor( geometry, options ) {
 
         }
     
-    this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
+        this.onBeforeRender2 && this.onBeforeRender2(renderer, scene, camera);
 
         reflectorWorldPosition.setFromMatrixPosition( scope.matrixWorld );
         cameraWorldPosition.setFromMatrixPosition( camera.matrixWorld );
@@ -163,6 +169,12 @@ constructor( geometry, options ) {
 
             // Render
 
+            var currentRenderTarget = renderer.getRenderTarget();
+
+            if (renderTarget == null) {
+                const outputEncoding = ( currentRenderTarget === null ) ? renderer.outputEncoding : currentRenderTarget.texture.encoding;
+                renderTarget = createRenderTarget(outputEncoding);
+            }
             scope.visible = false;
 
             /* renderer.setRenderTarget(renderTarget);
@@ -170,7 +182,6 @@ constructor( geometry, options ) {
                 renderer.render(scene, virtualCamera);
                 renderer.setRenderTarget(null); */
 
-            var currentRenderTarget = renderer.getRenderTarget();
 
             var currentXrEnabled = renderer.xr.enabled;
             var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
@@ -181,7 +192,7 @@ constructor( geometry, options ) {
             renderer.setRenderTarget( renderTarget );
             renderer.state.buffers.depth.setMask(true);
             renderer.setClearColor(whiteColor, 1);
-            renderer.clear();
+            if ( renderer.autoClear === false ) renderer.clear();
             // // need to update frame to request skeleton update for the renderer skeleton update
             // // in case of first person view when head gets removed.
             // renderer.info.render.frame ++;
@@ -287,6 +298,7 @@ Reflector.ReflectorShader = {
 
         '	vec4 base = texture2DProj( tDiffuse, vUv );',
         '	gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );',
+        ' #include <encodings_fragment>',
 
         `${THREE.ShaderChunk.logdepthbuf_fragment}`,
 
