@@ -82,9 +82,8 @@ constructor( geometry, options ) {
         if (this.visible) {
             const gl = renderer.getContext();
             gl.enable(gl.STENCIL_TEST);
-            gl.stencilFunc(gl.EQUAL, 1, 0xff);
-            gl.stencilMask(0);
-            gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+            gl.stencilFunc(gl.ALWAYS, 0, 0xff);
+            gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
         }
 
         if ( 'recursion' in camera.userData ) {
