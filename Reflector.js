@@ -50,7 +50,7 @@ constructor( geometry, options ) {
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
         format: THREE.RGBAFormat,
-        stencilBuffer: false,
+        stencilBuffer: true,
     };
 
     const createRenderTarget = ({encoding, renderer, scene, camera}) => {
