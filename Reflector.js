@@ -76,10 +76,17 @@ constructor( geometry, options ) {
         return renderTarget;
     };
 
-    let lastRendered = false;
     let renderTarget = null;
     
     this.onBeforeRender = function ( renderer, scene, camera ) {
+        if (this.visible) {
+            const gl = renderer.getContext();
+            gl.enable(gl.STENCIL_TEST);
+            gl.stencilFunc(gl.EQUAL, 1, 0xff);
+            gl.stencilMask(0);
+            gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+        }
+
         if ( 'recursion' in camera.userData ) {
 
             if ( camera.userData.recursion === recursion ) return;
@@ -208,23 +215,16 @@ constructor( geometry, options ) {
             }
 
             scope.visible = true;
-
-            lastRendered = true;
-    } else {
-      if (lastRendered) {
-        const currentRenderTarget = renderer.getRenderTarget();
-        renderer.setRenderTarget(renderTarget);
-        renderer.setClearColor(blackColor, 1);
-        renderer.clear();
-        renderer.setRenderTarget(currentRenderTarget);
-      }
-      lastRendered = false;
     }
 
     renderer.setClearColor(oldClearColor, oldClearAlpha);
-
-    this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
     };
+
+    this.onAfterRender = (renderer, scene, camera) => {
+        this.onAfterRender2 && this.onAfterRender2(renderer, scene, camera);
+        const gl = renderer.getContext();
+        gl.disable(gl.STENCIL_TEST);
+    }
 
     this.getRenderTarget = function () {
 
@@ -234,6 +234,7 @@ constructor( geometry, options ) {
 
 }
 };
+
 Reflector.ReflectorShader = {
 
     uniforms: {
