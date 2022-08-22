@@ -63,14 +63,14 @@ constructor( geometry, options ) {
 
         }
 
-        const composer = new EffectComposer(renderer);
-        composer.addPass(new RenderPass(scene, camera));
+        this.composer = new EffectComposer(renderer);
+        this.composer.addPass(new RenderPass(scene, camera));
         const shaderPass = new ShaderPass(shader);
         shaderPass.renderToScreen = true;
         shaderPass.material.uniforms.color.value = color;
         shaderPass.material.uniforms.tDiffuse.value = renderTarget.texture;
         shaderPass.material.uniforms.textureMatrix.value = textureMatrix;
-        composer.addPass(shaderPass);
+        this.composer.addPass(shaderPass);
 
         this.material = shaderPass.material;
         return renderTarget;
@@ -174,13 +174,8 @@ constructor( geometry, options ) {
                 const outputEncoding = ( currentRenderTarget === null ) ? renderer.outputEncoding : currentRenderTarget.texture.encoding;
                 renderTarget = createRenderTarget({encoding: outputEncoding, renderer, scene, camera: virtualCamera});
             }
+
             scope.visible = false;
-
-            /* renderer.setRenderTarget(renderTarget);
-            renderer.clear(true, true, true);
-                renderer.render(scene, virtualCamera);
-                renderer.setRenderTarget(null); */
-
 
             var currentXrEnabled = renderer.xr.enabled;
             var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
@@ -195,7 +190,7 @@ constructor( geometry, options ) {
             // // need to update frame to request skeleton update for the renderer skeleton update
             // // in case of first person view when head gets removed.
             // renderer.info.render.frame ++;
-            renderer.render( scene, virtualCamera );
+            this.composer && this.composer.render();
 
             renderer.xr.enabled = currentXrEnabled;
             renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
