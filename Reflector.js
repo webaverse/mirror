@@ -3,6 +3,9 @@
  */
 
 import * as THREE from 'three';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/effectcomposer';
 
 const localColor = new THREE.Color();
 const blackColor = new THREE.Color(0x000000);
@@ -50,9 +53,8 @@ constructor( geometry, options ) {
         stencilBuffer: false,
     };
 
-    const createRenderTarget = (encoding) => {
-
-        parameters[encoding] = encoding;
+    const createRenderTarget = ({encoding, renderer, scene, camera}) => {
+        parameters.encoding = encoding;
         var renderTarget = new THREE.WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
         if ( ! THREE.MathUtils.isPowerOfTwo( textureWidth ) || ! THREE.MathUtils.isPowerOfTwo( textureHeight ) ) {
@@ -61,19 +63,16 @@ constructor( geometry, options ) {
 
         }
 
-        var material = new THREE.ShaderMaterial( {
-            uniforms: THREE.UniformsUtils.clone( shader.uniforms ),
-            fragmentShader: shader.fragmentShader,
-            vertexShader: shader.vertexShader,
-            transparent: options.transparent,
-        } );
+        const composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        const shaderPass = new ShaderPass(shader);
+        shaderPass.renderToScreen = true;
+        shaderPass.material.uniforms.color.value = color;
+        shaderPass.material.uniforms.tDiffuse.value = renderTarget.texture;
+        shaderPass.material.uniforms.textureMatrix.value = textureMatrix;
+        composer.addPass(shaderPass);
 
-        material.uniforms[ "tDiffuse" ].value = renderTarget.texture;
-        material.uniforms[ "color" ].value = color;
-        material.uniforms[ "textureMatrix" ].value = textureMatrix;
-
-        this.material = material;
-
+        this.material = shaderPass.material;
         return renderTarget;
     };
 
@@ -105,7 +104,7 @@ constructor( geometry, options ) {
     const oldClearAlpha = renderer.getClearAlpha();
 
         // Avoid rendering when reflector is facing away
-    const maxDistance = 5;
+    const maxDistance = 20;
         if ( view.dot( normal ) < 0 && view.length() < maxDistance) {
             view.reflect( normal ).negate();
             view.add( reflectorWorldPosition );
@@ -173,7 +172,7 @@ constructor( geometry, options ) {
 
             if (renderTarget == null) {
                 const outputEncoding = ( currentRenderTarget === null ) ? renderer.outputEncoding : currentRenderTarget.texture.encoding;
-                renderTarget = createRenderTarget(outputEncoding);
+                renderTarget = createRenderTarget({encoding: outputEncoding, renderer, scene, camera: virtualCamera});
             }
             scope.visible = false;
 
