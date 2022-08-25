@@ -88,7 +88,7 @@ class Reflector extends THREE.Mesh {
       this.composer = new EffectComposer(renderer);
       this.composer.addPass(new RenderPass(scene, camera));
       const shaderPass = new ShaderPass(shader);
-      shaderPass.renderToScreen = true;
+      // shaderPass.renderToScreen = true;
       shaderPass.material.uniforms.color.value = color;
       shaderPass.material.uniforms.tDiffuse.value = renderTarget.texture;
       shaderPass.material.uniforms.textureMatrix.value = textureMatrix;
