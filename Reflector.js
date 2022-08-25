@@ -65,30 +65,11 @@ class Reflector extends THREE.Mesh {
         renderTarget.texture.generateMipmaps = false;
       }
 
-      // // renderer.localClippingEnabled = true;
-      // // let planes = [new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)];
-      // let shaderMat = new THREE.ShaderMaterial({
-      //   uniforms: {
-      //     tDiffuse: { value: renderTarget.texture },
-      //     color: { value: color },
-      //     textureMatrix: { value: textureMatrix },
-      //   },
-      //   vertexShader: shader.vertexShader,
-      //   fragmentShader: shader.fragmentShader,
-      //   transparent: options.transparent,
-      //   // clipping: true,
-      //   // clippingPlanes: planes,
-
-      //   // side: THREE.DoubleSide,
-      //   // blending: THREE.AdditiveBlending,
-      //   // depthWrite: false,
-      // });
-      // this.material = shaderMat;
-
       this.composer = new EffectComposer(renderer);
       this.composer.addPass(new RenderPass(scene, camera));
+      this.composer.reset(renderTarget);
       const shaderPass = new ShaderPass(shader);
-      // shaderPass.renderToScreen = true;
+      shaderPass.renderToScreen = true;
       shaderPass.material.uniforms.color.value = color;
       shaderPass.material.uniforms.tDiffuse.value = renderTarget.texture;
       shaderPass.material.uniforms.textureMatrix.value = textureMatrix;
@@ -101,12 +82,10 @@ class Reflector extends THREE.Mesh {
     let renderTarget = null;
 
     this.onBeforeRender = function (renderer, scene, camera) {
-      if (this.visible) {
-        const gl = renderer.getContext();
-        gl.enable(gl.STENCIL_TEST);
-        gl.stencilFunc(gl.ALWAYS, 0, 0xff);
-        gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
-      }
+      const gl = renderer.getContext();
+      gl.enable(gl.STENCIL_TEST);
+      gl.stencilFunc(gl.ALWAYS, 0, 0xff);
+      gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
 
       if ("recursion" in camera.userData) {
         if (camera.userData.recursion === recursion) return;
@@ -236,7 +215,6 @@ class Reflector extends THREE.Mesh {
       var currentXrEnabled = renderer.xr.enabled;
       var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
-      renderer.localClippingEnabled = true;
       renderer.xr.enabled = false; // Avoid camera modification and recursion
       renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
       renderer.setRenderTarget(renderTarget);
@@ -246,7 +224,6 @@ class Reflector extends THREE.Mesh {
       // // need to update frame to request skeleton update for the renderer skeleton update
       // // in case of first person view when head gets removed.
       // renderer.info.render.frame ++;
-      // renderer.render(scene, virtualCamera);
       this.composer && this.composer.render();
 
       renderer.xr.enabled = currentXrEnabled;
